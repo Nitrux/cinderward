@@ -7,7 +7,7 @@ A simple, no-nonsense, init-free, Wayland-friendly GUI for **[firewalld](https:/
 
 # Introduction
 
-Cinderwuard is a simple utility built with MauiKit that provides an intuitive interface for managing day-to-day firewall rules without the complexity of firewalld's command-line tooling.
+Cinderward is a simple utility built with MauiKit that provides an intuitive interface for managing day-to-day firewall rules without the complexity of firewalld's command-line tooling.
 
 ## Features
 
