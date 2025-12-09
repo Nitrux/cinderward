@@ -11,21 +11,28 @@ Cinderward is a simple utility built with MauiKit that provides an intuitive int
 
 ## Features
 
-- View and edit firewall rules by zone  
-- Enable or disable:
-  - Panic Mode (Lockdown)
+- Zone-based control:
+  - View and edit firewalld rules per zone
+  - Add or remove services, ports (TCP/UDP), and port forwarding rules
+
+- One-click security toggles:
+  - Panic Mode (lockdown)
   - Masquerading (NAT)
   - Logging of denied packets
   - ICMP reconnaissance blocking
-- Add or remove:
-  - Services  
-  - Ports (TCP/UDP)  
-  - Port forwarding rules  
-- Real-time synchronization with firewalld via D-Bus  
-- Wayland-compatible
-- ***Does not require Systemd*** (or other inits to function)
-- Built with **Qt 6**, **MauiKit**, and **KF6**
-- Optimized for x86-64-v3
+
+- Always in sync:
+  - Real-time synchronization with firewalld over D-Bus
+  - Changes are applied immediately to the active firewall
+
+- Desktop-friendly:
+  - Wayland-compatible UI
+  - ***Does not require systemd*** (init-agnostic; works regardless of init system)
+
+- Built for modern Linux:
+  - Implemented with **Qt 6**, **MauiKit**, and **KF6**
+  - Optimized for **x86-64-v3** CPUs
+
 
 Cinderward intentionally does **not** expose advanced or dangerous firewalld features. Its design goal is to remain approachable and safe for everyday users while still being powerful enough for typical workstation and laptop use cases.
 
