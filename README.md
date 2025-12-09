@@ -9,6 +9,8 @@ A simple, no-nonsense, init-agnostic, Wayland-friendly GUI for **[firewalld](htt
 
 Cinderward is a simple utility built with **[MauiKit](https://mauikit.org/)** that provides an intuitive interface for managing day-to-day firewall rules without the complexity of firewalld's command-line tooling.
 
+Cinderward intentionally does **not** expose advanced or dangerous firewalld features. Its design goal is to remain approachable and safe for everyday users while still being powerful enough for typical workstation and laptop use cases.
+
 ## Features
 
 - Zone-based control:
@@ -32,9 +34,6 @@ Cinderward is a simple utility built with **[MauiKit](https://mauikit.org/)** th
 - Built for modern Linux:
   - Implemented with **Qt 6**, **MauiKit**, and **KF6**
   - Optimized for **x86-64-v3** CPUs
-
-
-Cinderward intentionally does **not** expose advanced or dangerous firewalld features. Its design goal is to remain approachable and safe for everyday users while still being powerful enough for typical workstation and laptop use cases.
 
 ## Requirements
 
