@@ -22,14 +22,15 @@ Maui.ApplicationWindow {
     readonly property var consolidatedRuleModel: {
         var services = backend.services || []
         var ports = backend.ports || []
+        var sources = backend.sources || []
         var forwardRules = backend.forwardRules || []
 
         var s = services.map(val => ({ "type": "service", "value": val }))
         var p = ports.map(val => ({ "type": "port", "value": val }))
-        var f = forwardRules.map(val => ({
-            "type": "forward", "value": val
-        }))
-        return s.concat(p).concat(f)
+        var src = sources.map(val => ({ "type": "source", "value": val }))
+        var f = forwardRules.map(val => ({ "type": "forward", "value": val }))
+        
+        return s.concat(p).concat(src).concat(f)
     }
 
     title: "Zone — " + profileText + (statusText ? " (" + statusText + ")" : "")
@@ -105,6 +106,12 @@ Maui.ApplicationWindow {
 
             checked: backend.panic
             onClicked: backend.setPanic(!backend.panic)
+
+            QQC.ToolTip {
+                visible: parent.hovered
+                text: qsTr("Immediately block all incoming and outgoing connections.")
+                delay: 500
+            }
         }
 
         Maui.ScrollColumn {
@@ -127,12 +134,20 @@ Maui.ApplicationWindow {
                 }
 
                 Maui.FlexSectionItem {
-                    label1.text: qsTr("Block Reconnaissance")
-                    label2.text: qsTr("Blocks ping (echo) and timestamp requests for host hiding.")
+                    label1.text: qsTr("Stealth Mode")
+                    label2.text: qsTr("Silently drop all uninvited packets (Target: DROP).")
+                    QQC.Switch {
+                        checked: backend.stealthMode
+                        onToggled: backend.setStealthMode(checked, root.currentZone)
+                    }
+                }
 
+                Maui.FlexSectionItem {
+                    label1.text: qsTr("Strict ICMP")
+                    label2.text: qsTr("Allow critical ICMP types required for a healthy connection, while still blocking everything else.")
                     QQC.Switch {        
-                        checked: backend.blockReconIcmp
-                        onToggled: backend.setBlockReconIcmp(checked, root.currentZone)
+                        checked: backend.strictIcmp
+                        onToggled: backend.setStrictIcmp(checked, root.currentZone)
                     }
                 }
 
@@ -211,6 +226,33 @@ Maui.ApplicationWindow {
 
             Maui.SectionGroup {
                 Layout.fillWidth: true
+                title: qsTr("Sources")
+                description: qsTr("Trust traffic from specific IPs/Subnets.")
+
+                RowLayout {
+                    Layout.fillWidth: true
+                    spacing: 10
+
+                    Maui.TextField {
+                        id: sourceText
+                        Layout.fillWidth: true
+                        placeholderText: qsTr("IP or CIDR (e.g. 192.168.1.5)")
+                    }
+
+                    QQC.Button {
+                        display: QQC.AbstractButton.IconOnly
+                        icon.name: "list-add"
+
+                        onClicked: {
+                            backend.addSource(sourceText.text, root.currentZone)
+                            sourceText.text = ""
+                        }
+                    }
+                }
+            }
+
+            Maui.SectionGroup {
+                Layout.fillWidth: true
                 title: qsTr("Port Forwarding")
                 description: qsTr("Redirect network traffic from one port to another port.")
 
@@ -281,8 +323,10 @@ Maui.ApplicationWindow {
                 delegate: Maui.ListDelegate {
                     width: ListView.view.width
 
-                    iconName: modelData.type === "service" ? "application-x-service" : 
-                              modelData.type === "port" ? "network-wired" : "preferences-system-network-sharing"
+                    iconName: modelData.type === "service" ? "applications-other" : 
+                              modelData.type === "port" ? "network-wired" : 
+                              modelData.type === "source" ? "preferences-system-network" :
+                              "preferences-system-network-sharing"
 
                     label: modelData.value
 
@@ -303,6 +347,8 @@ Maui.ApplicationWindow {
                                 if (parts.length === 2) {
                                     backend.removePort(parts[0], parts[1], zone)
                                 }
+                            } else if (type === "source") {
+                                backend.removeSource(val, zone)
                             } else if (type === "forward") {
                                 var getValue = function(k) {
                                     var match = val.match(new RegExp(k + "=([^:]*)"))

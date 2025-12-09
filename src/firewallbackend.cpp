@@ -59,10 +59,12 @@ QStringList FirewallBackend::services() const { return m_services; }
 QStringList FirewallBackend::ports() const { return m_ports; }
 QStringList FirewallBackend::forwardRules() const { return m_forwardRules; }
 QStringList FirewallBackend::knownServices() const { return m_knownServices; }
+QStringList FirewallBackend::sources() const { return m_sources; }
 bool FirewallBackend::masquerade() const { return m_masquerade; }
 bool FirewallBackend::logDenied() const { return m_logDenied; }
 bool FirewallBackend::panic() const { return m_panic; }
-bool FirewallBackend::blockReconIcmp() const { return m_blockReconIcmp; }
+bool FirewallBackend::stealthMode() const { return m_stealthMode; }
+bool FirewallBackend::strictIcmp() const { return m_strictIcmp; }
 
 // === SETTERS (Internal) ===
 void FirewallBackend::setState(const QString &s) { if (m_state != s) { m_state = s; emit stateChanged(); } }
@@ -73,7 +75,9 @@ void FirewallBackend::setForwardRules(const QStringList &r) { if (m_forwardRules
 void FirewallBackend::setMasqueradeState(bool enabled) { if (m_masquerade != enabled) { m_masquerade = enabled; emit masqueradeChanged(); } }
 void FirewallBackend::setLogDeniedState(bool enabled) { if (m_logDenied != enabled) { m_logDenied = enabled; emit logDeniedChanged(); } }
 void FirewallBackend::setPanicState(bool enabled) { if (m_panic != enabled) { m_panic = enabled; emit panicChanged(); } }
-void FirewallBackend::setBlockReconIcmpState(bool enabled) { if (m_blockReconIcmp != enabled) { m_blockReconIcmp = enabled; emit blockReconIcmpChanged(); } }
+void FirewallBackend::setStealthModeState(bool enabled) { if (m_stealthMode != enabled) { m_stealthMode = enabled; emit stealthModeChanged(); } }
+void FirewallBackend::setStrictIcmpState(bool enabled) { if (m_strictIcmp != enabled) { m_strictIcmp = enabled; emit strictIcmpChanged(); } }
+void FirewallBackend::setSources(const QStringList &s) { if (m_sources != s) { m_sources = s; emit sourcesChanged(); } }
 
 // === REFRESH LOGIC (Permanent-based) ===
 
@@ -138,7 +142,12 @@ void FirewallBackend::refresh(const QString &zone)
         setPorts({});
     }
 
-    // 6. Forward Ports (Always from Permanent)
+    // 6. Sources
+
+    QDBusReply<QStringList> sourcesReply = permanentZoneIf.call("getSources");
+    setSources(sourcesReply.isValid() ? sourcesReply.value() : QStringList());
+
+    // 7. Forward Ports (Always from Permanent)
     QDBusMessage fwdMsg = permanentZoneIf.call("getForwardPorts");
     if (fwdMsg.type() == QDBusMessage::ReplyMessage) {
         const QDBusArgument &arg = fwdMsg.arguments().at(0).value<QDBusArgument>();
@@ -160,23 +169,21 @@ void FirewallBackend::refresh(const QString &zone)
         setForwardRules({});
     }
 
-    // 7. Masquerade (Always from Permanent)
+    // 8. Masquerade (Always from Permanent)
     QDBusReply<bool> masqReply = permanentZoneIf.call("queryMasquerade");
     if (masqReply.isValid())
         setMasqueradeState(masqReply.value());
     else
         setMasqueradeState(false);
 
-    // 8. ICMP Reconnaissance Blocking Status (Always from Permanent)
-    QDBusReply<bool> pingReply = permanentZoneIf.call("queryIcmpBlock", "echo-request");
-    QDBusReply<bool> tsReply = permanentZoneIf.call("queryIcmpBlock", "timestamp-request");
+    // 9. Stealth Mode (Check if Target is DROP)
+    QDBusReply<QString> targetReply = permanentZoneIf.call("getTarget");
+    setStealthModeState(targetReply.isValid() && targetReply.value() == "DROP");
 
-    bool isBlocking = pingReply.isValid() && pingReply.value() &&
-                      tsReply.isValid() && tsReply.value();
+    QDBusReply<bool> icmpInvReply = permanentZoneIf.call("getIcmpBlockInversion");
+    setStrictIcmpState(icmpInvReply.isValid() && icmpInvReply.value());
 
-    setBlockReconIcmpState(isBlocking);
-
-    // 9. Log Denied (Global)
+    // 10. Log Denied (Global)
     QDBusReply<QString> logDeniedReply = fw.call("getLogDenied");
     if (logDeniedReply.isValid()) {
         setLogDeniedState(logDeniedReply.value() != "off");
@@ -186,6 +193,54 @@ void FirewallBackend::refresh(const QString &zone)
 }
 
 // === MODIFICATION LOGIC (Permanent + Reload) ===
+
+void FirewallBackend::addSource(const QString &source, const QString &zone)
+{
+    QString path = getPermanentZonePath(zone);
+    if (path.isEmpty()) return;
+    QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
+    QDBusReply<void> reply = zoneIf.call("addSource", source);
+    if (!reply.isValid()) emit operationError("Failed: " + reply.error().message());
+    else reload();
+}
+
+void FirewallBackend::removeSource(const QString &source, const QString &zone)
+{
+    QString path = getPermanentZonePath(zone);
+    if (path.isEmpty()) return;
+    QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
+    zoneIf.call("removeSource", source);
+    reload();
+}
+
+void FirewallBackend::setStealthMode(bool enabled, const QString &zone)
+{
+    QString path = getPermanentZonePath(zone);
+    if (path.isEmpty()) return;
+    QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
+    
+    zoneIf.call("setTarget", enabled ? "DROP" : "default");
+    reload();
+}
+
+void FirewallBackend::setStrictIcmp(bool enabled, const QString &zone)
+{
+    QString path = getPermanentZonePath(zone);
+    if (path.isEmpty()) return;
+    QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
+
+    if (enabled) {
+        zoneIf.call("addIcmpBlockInversion");
+        zoneIf.call("addIcmpBlock", "destination-unreachable"); 
+        zoneIf.call("addIcmpBlock", "time-exceeded"); 
+        
+    } else {
+        zoneIf.call("removeIcmpBlockInversion");
+        zoneIf.call("removeIcmpBlock", "destination-unreachable");
+        zoneIf.call("removeIcmpBlock", "time-exceeded");
+    }
+    reload();
+}
 
 void FirewallBackend::addService(const QString &service, const QString &zone)
 {
@@ -281,34 +336,6 @@ void FirewallBackend::setMasquerade(bool enabled, const QString &zone)
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
     if (enabled) zoneIf.call("addMasquerade");
     else zoneIf.call("removeMasquerade");
-    reload();
-}
-
-void FirewallBackend::setBlockReconIcmp(bool enabled, const QString &zone)
-{
-    QString path = getPermanentZonePath(zone);
-    if (path.isEmpty()) return;
-
-    QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-
-    QStringList reconTypes = QStringList() << "echo-request" << "timestamp-request";
-    
-    QStringList essentialTypes = QStringList() << "destination-unreachable" << "time-exceeded";
-
-    if (enabled) {
-        for (const QString &type : reconTypes) {
-            zoneIf.call("addIcmpBlock", type);
-        }
-        for (const QString &type : essentialTypes) {
-             zoneIf.call("removeIcmpBlock", type);
-        }
-
-    } else {
-        for (const QString &type : reconTypes) {
-            zoneIf.call("removeIcmpBlock", type);
-        }
-    }
-
     reload();
 }
 
