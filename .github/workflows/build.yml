@@ -1,0 +1,66 @@
+name: Cinderward Deb
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageCloudRepo:
+        description: 'Package Cloud Repo'
+        required: true
+        default: 'testing'
+        type: choice
+        options:
+        - testing
+      packageVersion:
+        description: 'Package Version'
+        required: true
+        type: string
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-24.04
+    container:
+      image: debian:testing
+      env:
+        DEBIAN_FRONTEND: noninteractive
+        PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+
+    steps:
+      - name: Setup amd64 environment
+        run: apt update && apt install -y build-essential devscripts equivs git gnupg lintian ruby-full sudo
+      - run: gem install package_cloud
+      - uses: actions/checkout@v4
+      - run: ./scripts/install-build-deps.sh
+      - run: ./scripts/build-deb.sh
+        env:
+          PACKAGE_VERSION: ${{ inputs.packageVersion }}
+          TARGET_ARCH: amd64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-package-amd64
+          path: ./build/*.deb
+      - run: package_cloud push nitrux/${{ inputs.packageCloudRepo }}/debian/duke ./build/*.deb
+
+  build-arm64:
+    runs-on: ubuntu-24.04-arm
+    container:
+      image: arm64v8/debian:testing
+      env:
+        DEBIAN_FRONTEND: noninteractive
+        PACKAGECLOUD_TOKEN: ${{ secrets.PACKAGECLOUD_TOKEN }}
+
+    steps:
+      - name: Setup arm64 environment
+        run: |
+          apt update && apt install -y build-essential devscripts equivs git gnupg lintian ruby-full sudo
+      - run: gem install package_cloud
+      - uses: actions/checkout@v4
+      - run: ./scripts/install-build-deps.sh
+      - run: ./scripts/build-deb.sh
+        env:
+          PACKAGE_VERSION: ${{ inputs.packageVersion }}
+          TARGET_ARCH: arm64
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb-package-arm64
+          path: ./build/*.deb
+      - run: package_cloud push nitrux/${{ inputs.packageCloudRepo }}/debian/duke ./build/*.deb
