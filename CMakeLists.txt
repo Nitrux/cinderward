@@ -12,8 +12,11 @@ set(CMAKE_AUTOUIC ON)
 set(QT_MAJOR_VERSION 6)
 
 # === 1. COMPILER FLAGS (x86-64-v3) ===
+# Only apply x86-64 optimizations if we are actually compiling for x86_64.
 if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clang"))
-    add_compile_options(-march=x86-64-v3)
+    if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|amd64")
+        add_compile_options(-march=x86-64-v3)
+    endif()
 endif()
 
 find_package(ECM REQUIRED NO_MODULE)
