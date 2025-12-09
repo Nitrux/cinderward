@@ -29,7 +29,6 @@ Cinderward is a simple utility built with MauiKit that provides an intuitive int
 
 Cinderward intentionally does **not** expose advanced or dangerous firewalld features. Its design goal is to remain approachable and safe for everyday users while still being powerful enough for typical workstation and laptop use cases.
 
-
 ## Requirements
 
 - Nitrux 5.1.0 and newer.
@@ -62,4 +61,3 @@ If you find problems with the contents of this repository, please create an issu
 Before submitting a bug, you should look at the [existing bug reports]([url](https://github.com/Nitrux/cinderward/issues)) to verify that no one has reported the bug already.
 
 ©2025 Nitrux Latinoamericana S.C.
-
