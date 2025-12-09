@@ -63,6 +63,7 @@ $APT_COMMAND install -y - --no-install-recommends \
     qt6-declarative-dev \
     qt6-wayland-dev
 
+
 # -- Add package from our repository.
 
 mkdir -p /etc/apt/keyrings
