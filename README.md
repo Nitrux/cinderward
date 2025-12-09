@@ -1,6 +1,6 @@
 # Cinderward | [![License](https://img.shields.io/badge/License-BSD_3--Clause-blue.svg)](https://opensource.org/licenses/BSD-3-Clause)
 
-A simple, no-nonsense, init-free, Wayland-friendly GUI for **[firewalld](https://firewalld.org/)**.
+A simple, no-nonsense, init-agnostic, Wayland-friendly GUI for **[firewalld](https://firewalld.org/)**.
 
 ![Cinderward](https://nxos.org/wp-content/uploads/2025/12/image_2025-12-09_07-19-31-e1765286473119.png)
 > Cinderward, a GUI for firewalld.
