@@ -55,3 +55,6 @@ target_link_libraries(cinderward PRIVATE
 )
 
 install(TARGETS cinderward ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
+
+# === INSTALL DESKTOP FILE ===
+install(FILES data/org.nitrux.cinderward.desktop DESTINATION ${KDE_INSTALL_APPDIR})

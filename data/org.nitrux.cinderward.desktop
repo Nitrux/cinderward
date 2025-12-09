@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=Cinderward
+Comment=Simple Firewall Policy Editor
+Exec=cinderward
+Icon=preferences-security-firewall
+Type=Application
+Categories=System;Security;Qt;
+Terminal=false
+StartupNotify=true
