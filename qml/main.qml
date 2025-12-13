@@ -119,46 +119,47 @@ Maui.ApplicationWindow {
             anchors.fill: parent
             spacing: Maui.Style.space.big
 
-            Maui.SectionGroup {
-                title: qsTr("Behavior")
-                description: qsTr("Network visibility and translation.")
+            Maui.SectionHeader {
+                Layout.fillWidth: true
+                text1: qsTr("Zone Configuration")
+                text2: qsTr("Manage global switches and add traffic rules.")
+            }
 
-                Maui.FlexSectionItem {
-                    label1.text: qsTr("Masquerading")
-                    label2.text: qsTr("Enable Network Address Translation (NAT) for outbound traffic.")
+            Maui.FlexSectionItem {
+                label1.text: qsTr("Masquerading")
+                label2.text: qsTr("Enable Network Address Translation (NAT) for outbound traffic.")
 
-                    QQC.Switch {
-                        checked: backend.masquerade
-                        onToggled: backend.setMasquerade(checked, root.currentZone)
-                    }
+                QQC.Switch {
+                    checked: backend.masquerade
+                    onToggled: backend.setMasquerade(checked, root.currentZone)
                 }
+            }
 
-                Maui.FlexSectionItem {
-                    label1.text: qsTr("Stealth Mode")
-                    label2.text: qsTr("Silently drop all uninvited packets (Target: DROP).")
-                    QQC.Switch {
-                        checked: backend.stealthMode
-                        onToggled: backend.setStealthMode(checked, root.currentZone)
-                    }
+            Maui.FlexSectionItem {
+                label1.text: qsTr("Stealth Mode")
+                label2.text: qsTr("Silently drop all uninvited packets (Target: DROP).")
+                QQC.Switch {
+                    checked: backend.stealthMode
+                    onToggled: backend.setStealthMode(checked, root.currentZone)
                 }
+            }
 
-                Maui.FlexSectionItem {
-                    label1.text: qsTr("Strict ICMP")
-                    label2.text: qsTr("Allow critical ICMP types required for a healthy connection, while still blocking everything else.")
-                    QQC.Switch {        
-                        checked: backend.strictIcmp
-                        onToggled: backend.setStrictIcmp(checked, root.currentZone)
-                    }
+            Maui.FlexSectionItem {
+                label1.text: qsTr("Strict ICMP")
+                label2.text: qsTr("Allow critical ICMP types required for a healthy connection, while still blocking everything else.")
+                QQC.Switch {        
+                    checked: backend.strictIcmp
+                    onToggled: backend.setStrictIcmp(checked, root.currentZone)
                 }
+            }
 
-                Maui.FlexSectionItem {
-                    label1.text: qsTr("Log Denied")
-                    label2.text: qsTr("Control logging for packets that are rejected or dropped.")
+            Maui.FlexSectionItem {
+                label1.text: qsTr("Log Denied")
+                label2.text: qsTr("Control logging for packets that are rejected or dropped.")
 
-                    QQC.Switch {
-                        checked: backend.logDenied
-                        onToggled: backend.setLogDenied(checked)
-                    }
+                QQC.Switch {
+                    checked: backend.logDenied
+                    onToggled: backend.setLogDenied(checked)
                 }
             }
 
@@ -305,6 +306,12 @@ Maui.ApplicationWindow {
                         }
                     }
                 }
+            }
+
+            Maui.SectionHeader {
+                Layout.fillWidth: true
+                text1: qsTr("Active Rules")
+                text2: qsTr("Current rules configured for this profile.")
             }
 
             Maui.ListBrowser {
