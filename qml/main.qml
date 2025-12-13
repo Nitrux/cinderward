@@ -99,21 +99,38 @@ Maui.ApplicationWindow {
             }
         ]
 
-        headBar.rightContent: QQC.Switch {
-            text: backend.panic
-                  ? qsTr("Disable Lockdown")
-                  : qsTr("Enable Lockdown")
+        headBar.rightContent: [
+            // 1. The Lockdown Switch (Existing)
+            QQC.Switch {
+                text: backend.panic ? qsTr("Disable Lockdown") : qsTr("Enable Lockdown")
+                checked: backend.panic
+                onClicked: backend.setPanic(!backend.panic)
 
-            checked: backend.panic
-            onClicked: backend.setPanic(!backend.panic)
+                QQC.ToolTip {
+                    visible: parent.hovered
+                    text: qsTr("Immediately block all incoming and outgoing connections.")
+                    delay: 500
+                }
+            },
 
-            QQC.ToolTip {
-                visible: parent.hovered
-                text: qsTr("Immediately block all incoming and outgoing connections.")
-                delay: 500
+            // 2. The Separator
+            QQC.ToolSeparator {
+                bottomPadding: 10
+                topPadding: 10
+            },
+
+            // 3. The Menu
+            Maui.ToolButtonMenu {
+                icon.name: "overflow-menu"
+
+                QQC.MenuItem {
+                    text: qsTr("About")
+                    icon.name: "documentinfo"
+                    onTriggered: Maui.App.aboutDialog()
+                }
             }
-        }
-
+        ]
+        
         Maui.ScrollColumn {
             id: scrollColumn
             anchors.fill: parent

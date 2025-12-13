@@ -8,25 +8,45 @@
 
 #include <KLocalizedString>
 #include <KLocalizedContext>
+#include <KAboutData>
 #include <MauiKit4/Core/mauiapp.h>
 #include "firewallbackend.h"
 
 int main(int argc, char *argv[])
 {
     // 1. ENABLE WINDOW TRANSPARENCY
-    // This tells the window manager we support transparency.
     QSurfaceFormat format;
     format.setAlphaBufferSize(8);
     QSurfaceFormat::setDefaultFormat(format);
 
     QGuiApplication app(argc, argv);
 
-    QCoreApplication::setOrganizationName("Nitrux");
-    QCoreApplication::setOrganizationDomain("nxos.org");
-    QCoreApplication::setApplicationName("Cinderward");
+    app.setOrganizationName("Nitrux");
+    app.setOrganizationDomain("nxos.org");
+    app.setApplicationName("Cinderward");
+    
+    app.setWindowIcon(QIcon("://assets/cinderward_64.png"));
 
     KLocalizedString::setApplicationDomain("cinderward");
-    MauiApp::instance()->setIconName("security-high");
+
+    // 2. SETUP ABOUT DATA
+    KAboutData about(QStringLiteral("cinderward"),
+                     i18n("Cinderward"),
+                     "0.1.0",
+                     i18n("Simple Firewall Policy Editor"),
+                     KAboutLicense::BSD_3_Clause,
+                     i18n("© 2025 Nitrux Latinoamericana S.C."));
+
+    about.addAuthor(QStringLiteral("Nitrux"), i18n("Developer"), QStringLiteral("uri_herrera@nxos.org"));
+    about.setHomepage("https://nxos.org");
+    about.setProductName("nitrux/cinderward");
+    about.setOrganizationDomain("nxos.org");
+    about.setProgramLogo(app.windowIcon());
+
+    KAboutData::setApplicationData(about);
+
+    // 3. INITIALIZE MAUIKIT
+    MauiApp::instance()->setIconName("preferences-security-firewall");
 
     qmlRegisterType<FirewallBackend>("org.nitrux.firewall", 1, 0, "FirewallBackend");
 
