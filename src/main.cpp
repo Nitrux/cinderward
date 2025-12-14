@@ -28,7 +28,7 @@ int main(int argc, char *argv[])
     app.setApplicationName("Cinderward");
     
     // 3. SETUP WINDOW ICON
-    QIcon appIcon = QIcon::fromTheme("security-high", QIcon(":/assets/cinderward.svg"));
+    QIcon appIcon = QIcon::fromTheme("preferences-security-firewall", QIcon(":/assets/cinderward.svg"));
     app.setWindowIcon(appIcon);
 
     KLocalizedString::setApplicationDomain("cinderward");
