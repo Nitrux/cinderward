@@ -36,12 +36,12 @@ int main(int argc, char *argv[])
     // 4. SETUP ABOUT DATA
     KAboutData about(QStringLiteral("cinderward"),
                      i18n("Cinderward"),
-                     "0.1.0",
+                     "0.0.1",
                      i18n("Simple Firewall Policy Editor"),
                      KAboutLicense::BSD_3_Clause,
                      i18n("© 2025 Nitrux Latinoamericana S.C."));
 
-    about.addAuthor(QStringLiteral("Nitrux"), i18n("Developer"), QStringLiteral("uri_herrera@nxos.org"));
+    about.addAuthor(QStringLiteral("Uri Herrera"), i18n("Developer"), QStringLiteral("uri_herrera@nxos.org"));
     about.setHomepage("https://nxos.org");
     about.setProductName("nitrux/cinderward");
     about.setOrganizationDomain("nxos.org");
