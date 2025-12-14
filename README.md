@@ -2,7 +2,7 @@
 
 A simple, no-nonsense, init-agnostic, Wayland-friendly GUI for **[firewalld](https://firewalld.org/)**.
 
-![Cinderward](https://nxos.org/wp-content/uploads/2025/12/image_2025-12-09_07-19-31-e1765286473119.png)
+![Cinderward](https://nxos.org/wp-content/uploads/2025/12/screenshot-20251213-232422.png)
 > Cinderward, a GUI for firewalld.
 
 # Introduction
