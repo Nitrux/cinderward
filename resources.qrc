@@ -1,5 +1,13 @@
+<!DOCTYPE RCC>
 <RCC>
-  <qresource prefix="/">
-    <file>qml/main.qml</file>
-  </qresource>
+    <qresource prefix="/">
+        <file>qml/main.qml</file>
+        <file>assets/cinderward.svg</file>
+        
+        <file alias="assets/subtle-dots.png">assets/nitrux.svg</file>
+        <file alias="assets/mauikit.svg">assets/nitrux.svg</file>
+        
+        <file alias="icons/nitrux.svg">assets/nitrux.svg</file>
+        <file alias="icons/nxos.org.svg">assets/nitrux.svg</file>
+    </qresource>
 </RCC>
