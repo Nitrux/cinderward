@@ -22,9 +22,12 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+    QStringList paths = QIcon::themeSearchPaths();
+    paths.append(":/icons");
+    QIcon::setThemeSearchPaths(paths);
+
     // 2. SETUP ORGANIZATION
     app.setOrganizationName("Nitrux");
-    app.setOrganizationDomain("nxos.org");
     app.setApplicationName("Cinderward");
     
     // 3. SETUP WINDOW ICON
@@ -33,10 +36,18 @@ int main(int argc, char *argv[])
 
     KLocalizedString::setApplicationDomain("cinderward");
 
-    // 4. SETUP ABOUT DATA
+    // 4. SETUP VERSION (With Git Info)
+    QString version = "0.0.3";
+#ifdef GIT_COMMIT_HASH
+    if (!QString(GIT_COMMIT_HASH).isEmpty()) {
+        version += QString(" %1/%2").arg(GIT_BRANCH).arg(GIT_COMMIT_HASH);
+    }
+#endif
+
+    // 5. SETUP ABOUT DATA
     KAboutData about(QStringLiteral("cinderward"),
                      i18n("Cinderward"),
-                     "0.0.1",
+                     version,
                      i18n("Simple Firewall Policy Editor"),
                      KAboutLicense::BSD_3_Clause,
                      i18n("© 2025 Nitrux Latinoamericana S.C."));
@@ -44,14 +55,16 @@ int main(int argc, char *argv[])
     about.addAuthor(QStringLiteral("Uri Herrera"), i18n("Developer"), QStringLiteral("uri_herrera@nxos.org"));
     about.setHomepage("https://nxos.org");
     about.setProductName("nitrux/cinderward");
-    about.setOrganizationDomain("nxos.org");
+    about.setOrganizationDomain("nxos.org");    
+    about.setDesktopFileName("org.nxos.cinderward");
     
-    // Explicitly set the logo for the About Dialog using the icon we resolved
+    // Set the logo for the About Dialog header
     about.setProgramLogo(app.windowIcon());
 
     KAboutData::setApplicationData(about);
 
-    // 3. INITIALIZE MAUIKIT
+    // 6. INITIALIZE MAUIKIT
+    // Initializes the singleton and theming
     MauiApp::instance()->setIconName("qrc:/assets/cinderward.svg"); 
 
     qmlRegisterType<FirewallBackend>("org.nitrux.firewall", 1, 0, "FirewallBackend");

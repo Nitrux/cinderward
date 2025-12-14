@@ -33,6 +33,24 @@ find_package(MauiKit4 REQUIRED)
 
 ecm_find_qmlmodule(org.mauikit.controls 1.0)
 
+find_package(Git)
+if(Git_FOUND AND EXISTS "${CMAKE_SOURCE_DIR}/.git")
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --abbrev-ref HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_BRANCH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+    )
+    add_compile_definitions(GIT_BRANCH="${GIT_BRANCH}")
+    add_compile_definitions(GIT_COMMIT_HASH="${GIT_COMMIT_HASH}")
+endif()
+
 # === 2. RENAMED EXECUTABLE ===
 add_executable(cinderward
     src/main.cpp
