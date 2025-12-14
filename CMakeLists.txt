@@ -27,7 +27,7 @@ include(KDECompilerSettings)
 include(ECMFindQmlModule)
 include(ECMSetupVersion)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 DBus)
+find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Svg DBus)
 find_package(KF6 REQUIRED COMPONENTS CoreAddons I18n WindowSystem)
 find_package(MauiKit4 REQUIRED)
 
@@ -47,6 +47,7 @@ target_link_libraries(cinderward PRIVATE
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
+    Qt6::Svg
     Qt6::DBus
     KF6::CoreAddons
     KF6::I18n

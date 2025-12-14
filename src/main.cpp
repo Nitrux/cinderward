@@ -5,6 +5,7 @@
 #include <QUrl>
 #include <QSurfaceFormat>
 #include <QQuickWindow>
+#include <QIcon>
 
 #include <KLocalizedString>
 #include <KLocalizedContext>
@@ -21,15 +22,18 @@ int main(int argc, char *argv[])
 
     QGuiApplication app(argc, argv);
 
+    // 2. SETUP ORGANIZATION
     app.setOrganizationName("Nitrux");
     app.setOrganizationDomain("nxos.org");
     app.setApplicationName("Cinderward");
     
-    app.setWindowIcon(QIcon("://assets/cinderward_64.png"));
+    // 3. SETUP WINDOW ICON
+    QIcon appIcon = QIcon::fromTheme("security-high", QIcon(":/assets/cinderward.svg"));
+    app.setWindowIcon(appIcon);
 
     KLocalizedString::setApplicationDomain("cinderward");
 
-    // 2. SETUP ABOUT DATA
+    // 4. SETUP ABOUT DATA
     KAboutData about(QStringLiteral("cinderward"),
                      i18n("Cinderward"),
                      "0.1.0",
@@ -41,12 +45,14 @@ int main(int argc, char *argv[])
     about.setHomepage("https://nxos.org");
     about.setProductName("nitrux/cinderward");
     about.setOrganizationDomain("nxos.org");
+    
+    // Explicitly set the logo for the About Dialog using the icon we resolved
     about.setProgramLogo(app.windowIcon());
 
     KAboutData::setApplicationData(about);
 
     // 3. INITIALIZE MAUIKIT
-    MauiApp::instance()->setIconName("preferences-security-firewall");
+    MauiApp::instance()->setIconName("qrc:/assets/cinderward.svg"); 
 
     qmlRegisterType<FirewallBackend>("org.nitrux.firewall", 1, 0, "FirewallBackend");
 

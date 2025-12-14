@@ -1,5 +1,7 @@
+<!DOCTYPE RCC>
 <RCC>
   <qresource prefix="/">
     <file>qml/main.qml</file>
+    <file>assets/cinderward.svg</file>
   </qresource>
 </RCC>
