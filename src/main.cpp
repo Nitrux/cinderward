@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
     KAboutData about(QStringLiteral("cinderward"),
                      i18n("Cinderward"),
                      version,
-                     i18n("Simple firewall policy editor"),
+                     i18n("Simple firewall policy editor."),
                      KAboutLicense::BSD_3_Clause,
                      // "Maui" must be present for the footer logo to appear
                      i18n("© %1 Made by Nitrux | Built with MauiKit", QString::number(QDate::currentDate().year())));
