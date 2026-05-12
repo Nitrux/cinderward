@@ -43,7 +43,7 @@ Cinderward intentionally does **not** expose advanced or dangerous firewalld fea
 
 ```
 firewalld (>= 2.3.1)
-mauikit (>= 4.0.2)
+mauikit (>= 4.0.3)
 qt6 (>= 6.8.2)
 kf6-windowsystem (>= 6.13.0)
 kf6-i18n (>= 6.13.0)
