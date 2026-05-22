@@ -10,6 +10,9 @@ set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
 set(QT_MAJOR_VERSION 6)
+set(REQUIRED_QT_VERSION 6.9)
+set(REQUIRED_KF6_VERSION 6.13.0)
+set(REQUIRED_MAUIKIT_VERSION 4.0.3)
 
 # === 1. COMPILER FLAGS (x86-64-v3) ===
 # Only apply x86-64 optimizations if we are actually compiling for x86_64.
@@ -19,7 +22,7 @@ if((CMAKE_CXX_COMPILER_ID MATCHES "GNU") OR (CMAKE_CXX_COMPILER_ID MATCHES "Clan
     endif()
 endif()
 
-find_package(ECM REQUIRED NO_MODULE)
+find_package(ECM ${REQUIRED_KF6_VERSION} REQUIRED NO_MODULE)
 set(CMAKE_MODULE_PATH ${ECM_MODULE_PATH})
 
 include(KDEInstallDirs)
@@ -27,9 +30,9 @@ include(KDECompilerSettings)
 include(ECMFindQmlModule)
 include(ECMSetupVersion)
 
-find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Svg DBus)
-find_package(KF6 REQUIRED COMPONENTS CoreAddons I18n WindowSystem)
-find_package(MauiKit4 REQUIRED)
+find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Svg DBus)
+find_package(KF6 ${REQUIRED_KF6_VERSION} REQUIRED COMPONENTS CoreAddons I18n WindowSystem)
+find_package(MauiKit4 ${REQUIRED_MAUIKIT_VERSION} REQUIRED)
 
 ecm_find_qmlmodule(org.mauikit.controls 1.0)
 
