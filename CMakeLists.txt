@@ -12,7 +12,7 @@ set(CMAKE_AUTOUIC ON)
 set(QT_MAJOR_VERSION 6)
 set(REQUIRED_QT_VERSION 6.9)
 set(REQUIRED_KF6_VERSION 6.13.0)
-set(REQUIRED_MAUIKIT_VERSION 4.0.3)
+set(REQUIRED_MAUIKIT_VERSION 4.0.4)
 
 # === 1. COMPILER FLAGS (x86-64-v3) ===
 # Only apply x86-64 optimizations if we are actually compiling for x86_64.
