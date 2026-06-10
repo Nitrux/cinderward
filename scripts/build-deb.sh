@@ -55,7 +55,7 @@ checkinstall -D -y \
 	--pakdir=. \
 	--maintainer=uri_herrera@nxos.org \
 	--provides=cinderward \
-	--requires="firewalld,libqt6svg6,mauikit \(\>= 4.0.3\)" \
+	--requires="firewalld,libqt6svg6,mauikit \(\>= 4.0.4\)" \
 	--nodoc \
 	--strip=no \
 	--stripso=yes \
