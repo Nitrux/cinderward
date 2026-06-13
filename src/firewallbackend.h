@@ -54,7 +54,7 @@ public:
     Q_INVOKABLE void setStealthMode(bool enabled, const QString &zone);
     Q_INVOKABLE void setStrictIcmp(bool enabled, const QString &zone);
 
-signals:
+Q_SIGNALS:
     void stateChanged();
     void defaultZoneChanged();
     void servicesChanged();

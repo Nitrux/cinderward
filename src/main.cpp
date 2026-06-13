@@ -24,24 +24,24 @@ int main(int argc, char *argv[])
     QGuiApplication app(argc, argv);
 
     QStringList paths = QIcon::themeSearchPaths();
-    paths.append(":/icons");
+    paths.append(QStringLiteral(":/icons"));
     QIcon::setThemeSearchPaths(paths);
 
     // 2. SETUP ORGANIZATION
-    app.setOrganizationName("Nitrux");
-    app.setApplicationName("Cinderward");
+    app.setOrganizationName(QStringLiteral("Nitrux"));
+    app.setApplicationName(QStringLiteral("Cinderward"));
     
     // 3. SETUP WINDOW ICON
-    QIcon appIcon = QIcon::fromTheme("preferences-security-firewall", QIcon(":/assets/cinderward.svg"));
+    QIcon appIcon = QIcon::fromTheme(QStringLiteral("preferences-security-firewall"), QIcon(QStringLiteral(":/assets/cinderward.svg")));
     app.setWindowIcon(appIcon);
 
-    KLocalizedString::setApplicationDomain("cinderward");
+    KLocalizedString::setApplicationDomain(QByteArrayLiteral("cinderward"));
 
     // 4. SETUP VERSION (With Git Info)
-    QString version = "0.0.3";
+    QString version = QStringLiteral("0.0.3");
 #ifdef GIT_COMMIT_HASH
-    if (!QString(GIT_COMMIT_HASH).isEmpty()) {
-        version += QString(" %1/%2").arg(GIT_BRANCH).arg(GIT_COMMIT_HASH);
+    if (!QStringLiteral(GIT_COMMIT_HASH).isEmpty()) {
+        version += QStringLiteral(" %1/%2").arg(QStringLiteral(GIT_BRANCH), QStringLiteral(GIT_COMMIT_HASH));
     }
 #endif
 
@@ -55,10 +55,10 @@ int main(int argc, char *argv[])
                      i18n("© %1 Made by Nitrux | Built with MauiKit", QString::number(QDate::currentDate().year())));
 
     about.addAuthor(QStringLiteral("Uri Herrera"), i18n("Developer"), QStringLiteral("uri_herrera@nxos.org"));
-    about.setHomepage("https://nxos.org");
-    about.setProductName("nitrux/cinderward");
-    about.setOrganizationDomain("nxos.org");    
-    about.setDesktopFileName("org.nxos.cinderward");
+    about.setHomepage(QStringLiteral("https://nxos.org"));
+    about.setProductName(QByteArrayLiteral("nitrux/cinderward"));
+    about.setOrganizationDomain(QByteArrayLiteral("nxos.org"));    
+    about.setDesktopFileName(QStringLiteral("org.nxos.cinderward"));
     
     // Set the logo for the About Dialog header
     about.setProgramLogo(app.windowIcon());
@@ -67,7 +67,7 @@ int main(int argc, char *argv[])
 
     // 6. INITIALIZE MAUIKIT
     // Initializes the singleton and theming
-    MauiApp::instance()->setIconName("qrc:/assets/cinderward.svg"); 
+    MauiApp::instance()->setIconName(QStringLiteral("qrc:/assets/cinderward.svg")); 
 
     qmlRegisterType<FirewallBackend>("org.nitrux.firewall", 1, 0, "FirewallBackend");
 

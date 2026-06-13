@@ -7,16 +7,16 @@
 
 // Constants for Firewalld D-Bus
 
-const QString FW_SERVICE = "org.fedoraproject.FirewallD1";
-const QString FW_PATH = "/org/fedoraproject/FirewallD1";
-const QString FW_INTERFACE = "org.fedoraproject.FirewallD1";
-const QString FW_ZONE_INTERFACE = "org.fedoraproject.FirewallD1.zone";
+const QString FW_SERVICE = QStringLiteral("org.fedoraproject.FirewallD1");
+const QString FW_PATH = QStringLiteral("/org/fedoraproject/FirewallD1");
+const QString FW_INTERFACE = QStringLiteral("org.fedoraproject.FirewallD1");
+const QString FW_ZONE_INTERFACE = QStringLiteral("org.fedoraproject.FirewallD1.zone");
 
 // Permanent Config Constants
 
-const QString FW_CONFIG_PATH = "/org/fedoraproject/FirewallD1/config";
-const QString FW_CONFIG_INTERFACE = "org.fedoraproject.FirewallD1.config";
-const QString FW_CONFIG_ZONE_INTERFACE = "org.fedoraproject.FirewallD1.config.zone";
+const QString FW_CONFIG_PATH = QStringLiteral("/org/fedoraproject/FirewallD1/config");
+const QString FW_CONFIG_INTERFACE = QStringLiteral("org.fedoraproject.FirewallD1.config");
+const QString FW_CONFIG_ZONE_INTERFACE = QStringLiteral("org.fedoraproject.FirewallD1.config.zone");
 
 FirewallBackend::FirewallBackend(QObject *parent)
     : QObject(parent)
@@ -25,7 +25,7 @@ FirewallBackend::FirewallBackend(QObject *parent)
     if (bus.isConnected()) {
         QDBusInterface fw(FW_SERVICE, FW_PATH, FW_INTERFACE, bus);
         
-        QDBusReply<QStringList> reply = fw.call("listServices");
+        QDBusReply<QStringList> reply = fw.call(QStringLiteral("listServices"));
         
         if (reply.isValid()) {
             m_knownServices = reply.value();
@@ -44,7 +44,7 @@ QString FirewallBackend::getPermanentZonePath(const QString &zoneName)
     QDBusInterface config(FW_SERVICE, FW_CONFIG_PATH, FW_CONFIG_INTERFACE, QDBusConnection::systemBus());
     
     // 2. Ask for the object path of the specific zone by name
-    QDBusReply<QDBusObjectPath> reply = config.call("getZoneByName", zoneName);
+    QDBusReply<QDBusObjectPath> reply = config.call(QStringLiteral("getZoneByName"), zoneName);
     if (reply.isValid()) {
         return reply.value().path();
     }
@@ -67,17 +67,17 @@ bool FirewallBackend::stealthMode() const { return m_stealthMode; }
 bool FirewallBackend::strictIcmp() const { return m_strictIcmp; }
 
 // === SETTERS (Internal) ===
-void FirewallBackend::setState(const QString &s) { if (m_state != s) { m_state = s; emit stateChanged(); } }
-void FirewallBackend::setDefaultZone(const QString &z) { if (m_defaultZone != z) { m_defaultZone = z; emit defaultZoneChanged(); } }
-void FirewallBackend::setServices(const QStringList &s) { if (m_services != s) { m_services = s; emit servicesChanged(); } }
-void FirewallBackend::setPorts(const QStringList &p) { if (m_ports != p) { m_ports = p; emit portsChanged(); } }
-void FirewallBackend::setForwardRules(const QStringList &r) { if (m_forwardRules != r) { m_forwardRules = r; emit forwardRulesChanged(); } }
-void FirewallBackend::setMasqueradeState(bool enabled) { if (m_masquerade != enabled) { m_masquerade = enabled; emit masqueradeChanged(); } }
-void FirewallBackend::setLogDeniedState(bool enabled) { if (m_logDenied != enabled) { m_logDenied = enabled; emit logDeniedChanged(); } }
-void FirewallBackend::setPanicState(bool enabled) { if (m_panic != enabled) { m_panic = enabled; emit panicChanged(); } }
-void FirewallBackend::setStealthModeState(bool enabled) { if (m_stealthMode != enabled) { m_stealthMode = enabled; emit stealthModeChanged(); } }
-void FirewallBackend::setStrictIcmpState(bool enabled) { if (m_strictIcmp != enabled) { m_strictIcmp = enabled; emit strictIcmpChanged(); } }
-void FirewallBackend::setSources(const QStringList &s) { if (m_sources != s) { m_sources = s; emit sourcesChanged(); } }
+void FirewallBackend::setState(const QString &s) { if (m_state != s) { m_state = s; Q_EMIT stateChanged(); } }
+void FirewallBackend::setDefaultZone(const QString &z) { if (m_defaultZone != z) { m_defaultZone = z; Q_EMIT defaultZoneChanged(); } }
+void FirewallBackend::setServices(const QStringList &s) { if (m_services != s) { m_services = s; Q_EMIT servicesChanged(); } }
+void FirewallBackend::setPorts(const QStringList &p) { if (m_ports != p) { m_ports = p; Q_EMIT portsChanged(); } }
+void FirewallBackend::setForwardRules(const QStringList &r) { if (m_forwardRules != r) { m_forwardRules = r; Q_EMIT forwardRulesChanged(); } }
+void FirewallBackend::setMasqueradeState(bool enabled) { if (m_masquerade != enabled) { m_masquerade = enabled; Q_EMIT masqueradeChanged(); } }
+void FirewallBackend::setLogDeniedState(bool enabled) { if (m_logDenied != enabled) { m_logDenied = enabled; Q_EMIT logDeniedChanged(); } }
+void FirewallBackend::setPanicState(bool enabled) { if (m_panic != enabled) { m_panic = enabled; Q_EMIT panicChanged(); } }
+void FirewallBackend::setStealthModeState(bool enabled) { if (m_stealthMode != enabled) { m_stealthMode = enabled; Q_EMIT stealthModeChanged(); } }
+void FirewallBackend::setStrictIcmpState(bool enabled) { if (m_strictIcmp != enabled) { m_strictIcmp = enabled; Q_EMIT strictIcmpChanged(); } }
+void FirewallBackend::setSources(const QStringList &s) { if (m_sources != s) { m_sources = s; Q_EMIT sourcesChanged(); } }
 
 // === REFRESH LOGIC (Permanent-based) ===
 
@@ -85,21 +85,21 @@ void FirewallBackend::refresh(const QString &zone)
 {
     QDBusConnection bus = QDBusConnection::systemBus();
     if (!bus.isConnected()) {
-        emit operationError("Cannot connect to system bus");
-        setState("error");
+        Q_EMIT operationError(QStringLiteral("Cannot connect to system bus"));
+        setState(QStringLiteral("error"));
         return;
     }
 
     QDBusInterface fw(FW_SERVICE, FW_PATH, FW_INTERFACE, bus);
 
     // 1. Get State & Panic
-    setState("running");
+    setState(QStringLiteral("running"));
 
-    QDBusReply<bool> panicReply = fw.call("queryPanicMode");
+    QDBusReply<bool> panicReply = fw.call(QStringLiteral("queryPanicMode"));
     if (panicReply.isValid()) setPanicState(panicReply.value());
 
     // 2. Determine the Zone to Query
-    QDBusReply<QString> defZoneReply = fw.call("getDefaultZone");
+    QDBusReply<QString> defZoneReply = fw.call(QStringLiteral("getDefaultZone"));
     QString actualZone = zone;
     
     // If we passed an empty string (from startup), use the system default
@@ -119,12 +119,12 @@ void FirewallBackend::refresh(const QString &zone)
     QDBusInterface permanentZoneIf(FW_SERVICE, permanentZonePath, FW_CONFIG_ZONE_INTERFACE, bus);
 
     // 4. Services (Always from Permanent)
-    QDBusReply<QStringList> servicesReply = permanentZoneIf.call("getServices");
+    QDBusReply<QStringList> servicesReply = permanentZoneIf.call(QStringLiteral("getServices"));
     if (servicesReply.isValid()) setServices(servicesReply.value());
     else setServices({});
 
     // 5. Ports (Always from Permanent)
-    QDBusMessage portsMsg = permanentZoneIf.call("getPorts");
+    QDBusMessage portsMsg = permanentZoneIf.call(QStringLiteral("getPorts"));
     if (portsMsg.type() == QDBusMessage::ReplyMessage) {
         const QDBusArgument &arg = portsMsg.arguments().at(0).value<QDBusArgument>();
         QStringList portList;
@@ -134,7 +134,7 @@ void FirewallBackend::refresh(const QString &zone)
             arg.beginStructure();
             arg >> port >> proto;
             arg.endStructure();
-            portList.append(port + "/" + proto);
+            portList.append(port + QStringLiteral("/") + proto);
         }
         arg.endArray();
         setPorts(portList);
@@ -144,11 +144,11 @@ void FirewallBackend::refresh(const QString &zone)
 
     // 6. Sources
 
-    QDBusReply<QStringList> sourcesReply = permanentZoneIf.call("getSources");
+    QDBusReply<QStringList> sourcesReply = permanentZoneIf.call(QStringLiteral("getSources"));
     setSources(sourcesReply.isValid() ? sourcesReply.value() : QStringList());
 
     // 7. Forward Ports (Always from Permanent)
-    QDBusMessage fwdMsg = permanentZoneIf.call("getForwardPorts");
+    QDBusMessage fwdMsg = permanentZoneIf.call(QStringLiteral("getForwardPorts"));
     if (fwdMsg.type() == QDBusMessage::ReplyMessage) {
         const QDBusArgument &arg = fwdMsg.arguments().at(0).value<QDBusArgument>();
         QStringList fwdList;
@@ -159,8 +159,8 @@ void FirewallBackend::refresh(const QString &zone)
             arg >> p >> proto >> toP >> toAddr;
             arg.endStructure();
 
-            QString rule = QString("port=%1:proto=%2:toport=%3").arg(p, proto, toP);
-            if (!toAddr.isEmpty()) rule += QString(":toaddr=%1").arg(toAddr);
+            QString rule = QStringLiteral("port=%1:proto=%2:toport=%3").arg(p, proto, toP);
+            if (!toAddr.isEmpty()) rule += QStringLiteral(":toaddr=%1").arg(toAddr);
             fwdList.append(rule);
         }
         arg.endArray();
@@ -170,23 +170,23 @@ void FirewallBackend::refresh(const QString &zone)
     }
 
     // 8. Masquerade (Always from Permanent)
-    QDBusReply<bool> masqReply = permanentZoneIf.call("queryMasquerade");
+    QDBusReply<bool> masqReply = permanentZoneIf.call(QStringLiteral("queryMasquerade"));
     if (masqReply.isValid())
         setMasqueradeState(masqReply.value());
     else
         setMasqueradeState(false);
 
     // 9. Stealth Mode (Check if Target is DROP)
-    QDBusReply<QString> targetReply = permanentZoneIf.call("getTarget");
-    setStealthModeState(targetReply.isValid() && targetReply.value() == "DROP");
+    QDBusReply<QString> targetReply = permanentZoneIf.call(QStringLiteral("getTarget"));
+    setStealthModeState(targetReply.isValid() && targetReply.value() == QStringLiteral("DROP"));
 
-    QDBusReply<bool> icmpInvReply = permanentZoneIf.call("getIcmpBlockInversion");
+    QDBusReply<bool> icmpInvReply = permanentZoneIf.call(QStringLiteral("getIcmpBlockInversion"));
     setStrictIcmpState(icmpInvReply.isValid() && icmpInvReply.value());
 
     // 10. Log Denied (Global)
-    QDBusReply<QString> logDeniedReply = fw.call("getLogDenied");
+    QDBusReply<QString> logDeniedReply = fw.call(QStringLiteral("getLogDenied"));
     if (logDeniedReply.isValid()) {
-        setLogDeniedState(logDeniedReply.value() != "off");
+        setLogDeniedState(logDeniedReply.value() != QStringLiteral("off"));
     } else {
         setLogDeniedState(false);
     }
@@ -199,8 +199,8 @@ void FirewallBackend::addSource(const QString &source, const QString &zone)
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    QDBusReply<void> reply = zoneIf.call("addSource", source);
-    if (!reply.isValid()) emit operationError("Failed: " + reply.error().message());
+    QDBusReply<void> reply = zoneIf.call(QStringLiteral("addSource"), source);
+    if (!reply.isValid()) Q_EMIT operationError(QStringLiteral("Failed: ") + reply.error().message());
     else reload();
 }
 
@@ -209,7 +209,7 @@ void FirewallBackend::removeSource(const QString &source, const QString &zone)
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    zoneIf.call("removeSource", source);
+    zoneIf.call(QStringLiteral("removeSource"), source);
     reload();
 }
 
@@ -219,7 +219,7 @@ void FirewallBackend::setStealthMode(bool enabled, const QString &zone)
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
     
-    zoneIf.call("setTarget", enabled ? "DROP" : "default");
+    zoneIf.call(QStringLiteral("setTarget"), enabled ? QStringLiteral("DROP") : QStringLiteral("default"));
     reload();
 }
 
@@ -230,14 +230,14 @@ void FirewallBackend::setStrictIcmp(bool enabled, const QString &zone)
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
 
     if (enabled) {
-        zoneIf.call("addIcmpBlockInversion");
-        zoneIf.call("addIcmpBlock", "destination-unreachable"); 
-        zoneIf.call("addIcmpBlock", "time-exceeded"); 
+        zoneIf.call(QStringLiteral("addIcmpBlockInversion"));
+        zoneIf.call(QStringLiteral("addIcmpBlock"), QStringLiteral("destination-unreachable")); 
+        zoneIf.call(QStringLiteral("addIcmpBlock"), QStringLiteral("time-exceeded")); 
         
     } else {
-        zoneIf.call("removeIcmpBlockInversion");
-        zoneIf.call("removeIcmpBlock", "destination-unreachable");
-        zoneIf.call("removeIcmpBlock", "time-exceeded");
+        zoneIf.call(QStringLiteral("removeIcmpBlockInversion"));
+        zoneIf.call(QStringLiteral("removeIcmpBlock"), QStringLiteral("destination-unreachable"));
+        zoneIf.call(QStringLiteral("removeIcmpBlock"), QStringLiteral("time-exceeded"));
     }
     reload();
 }
@@ -246,16 +246,16 @@ void FirewallBackend::addService(const QString &service, const QString &zone)
 {
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) {
-        emit operationError("Could not find path for zone: " + zone);
+        Q_EMIT operationError(QStringLiteral("Could not find path for zone: ") + zone);
         return;
     }
 
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
     
-    QDBusReply<void> reply = zoneIf.call("addService", service);
+    QDBusReply<void> reply = zoneIf.call(QStringLiteral("addService"), service);
     
     if (!reply.isValid()) {
-        emit operationError("Failed to add service '" + service + "': " + reply.error().message());
+        Q_EMIT operationError(QStringLiteral("Failed to add service '") + service + QStringLiteral("': ") + reply.error().message());
     } else {
         reload();
     }
@@ -266,7 +266,7 @@ void FirewallBackend::removeService(const QString &service, const QString &zone)
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    zoneIf.call("removeService", service);
+    zoneIf.call(QStringLiteral("removeService"), service);
     reload();
 }
 
@@ -276,10 +276,10 @@ void FirewallBackend::addPort(const QString &port, const QString &protocol, cons
     if (path.isEmpty()) return;
 
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    QDBusReply<void> reply = zoneIf.call("addPort", port, protocol);
+    QDBusReply<void> reply = zoneIf.call(QStringLiteral("addPort"), port, protocol);
 
     if (!reply.isValid()) {
-        emit operationError("Failed to add port: " + reply.error().message());
+        Q_EMIT operationError(QStringLiteral("Failed to add port: ") + reply.error().message());
     } else {
         reload();
     }
@@ -290,7 +290,7 @@ void FirewallBackend::removePort(const QString &port, const QString &protocol, c
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    zoneIf.call("removePort", port, protocol);
+    zoneIf.call(QStringLiteral("removePort"), port, protocol);
     reload();
 }
 
@@ -298,16 +298,16 @@ void FirewallBackend::addForwardRule(const QString &src, const QString &proto, c
 {
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) {
-        emit operationError("Could not find path for zone: " + zone);
+        Q_EMIT operationError(QStringLiteral("Could not find path for zone: ") + zone);
         return;
     }
 
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
     
-    QDBusReply<void> reply = zoneIf.call("addForwardPort", src, proto, destPort, destIP);
+    QDBusReply<void> reply = zoneIf.call(QStringLiteral("addForwardPort"), src, proto, destPort, destIP);
     
     if (!reply.isValid()) {
-        emit operationError("Failed to add forward rule: " + reply.error().message());
+        Q_EMIT operationError(QStringLiteral("Failed to add forward rule: ") + reply.error().message());
     } else {
         reload();
     }
@@ -318,14 +318,14 @@ void FirewallBackend::removeForwardRule(const QString &src, const QString &proto
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    zoneIf.call("removeForwardPort", src, proto, destPort, destIP);
+    zoneIf.call(QStringLiteral("removeForwardPort"), src, proto, destPort, destIP);
     reload();
 }
 
 void FirewallBackend::changeDefaultZone(const QString &zone)
 {
     QDBusInterface fw(FW_SERVICE, FW_PATH, FW_INTERFACE, QDBusConnection::systemBus());
-    fw.call("setDefaultZone", zone);
+    fw.call(QStringLiteral("setDefaultZone"), zone);
     refresh(zone); 
 }
 
@@ -334,17 +334,17 @@ void FirewallBackend::setMasquerade(bool enabled, const QString &zone)
     QString path = getPermanentZonePath(zone);
     if (path.isEmpty()) return;
     QDBusInterface zoneIf(FW_SERVICE, path, FW_CONFIG_ZONE_INTERFACE, QDBusConnection::systemBus());
-    if (enabled) zoneIf.call("addMasquerade");
-    else zoneIf.call("removeMasquerade");
+    if (enabled) zoneIf.call(QStringLiteral("addMasquerade"));
+    else zoneIf.call(QStringLiteral("removeMasquerade"));
     reload();
 }
 
 void FirewallBackend::setLogDenied(bool enabled)
 {
     QDBusInterface fw(FW_SERVICE, FW_PATH, FW_INTERFACE, QDBusConnection::systemBus());
-    QString value = enabled ? "all" : "off";
+    QString value = enabled ? QStringLiteral("all") : QStringLiteral("off");
     
-    fw.call("setLogDenied", value); 
+    fw.call(QStringLiteral("setLogDenied"), value); 
     
     setLogDeniedState(enabled);
 }
@@ -354,7 +354,7 @@ void FirewallBackend::setLogDenied(bool enabled)
 void FirewallBackend::reload()
 {
     QDBusInterface fw(FW_SERVICE, FW_PATH, FW_INTERFACE, QDBusConnection::systemBus());
-    fw.call("reload");
+    fw.call(QStringLiteral("reload"));
     refresh(m_defaultZone); 
 }
 
@@ -362,9 +362,9 @@ void FirewallBackend::setPanic(bool enabled)
 {
     QDBusInterface fw(FW_SERVICE, FW_PATH, FW_INTERFACE, QDBusConnection::systemBus());
     if (enabled)
-        fw.call("enablePanicMode");
+        fw.call(QStringLiteral("enablePanicMode"));
     else
-        fw.call("disablePanicMode");
+        fw.call(QStringLiteral("disablePanicMode"));
     
     refresh(m_defaultZone);
 }
