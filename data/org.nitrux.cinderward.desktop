@@ -2,7 +2,7 @@
 Name=Cinderward
 Comment=Simple Firewall Policy Editor
 Exec=cinderward
-Icon=preferences-security-firewall
+Icon=cinderward
 Type=Application
 Categories=System;Security;Qt;
 Terminal=false
