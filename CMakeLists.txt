@@ -12,7 +12,7 @@ set(CMAKE_AUTOUIC ON)
 set(QT_MAJOR_VERSION 6)
 set(REQUIRED_QT_VERSION 6.9)
 set(REQUIRED_KF6_VERSION 6.13.0)
-set(REQUIRED_MAUIKIT_VERSION 4.0.4)
+set(REQUIRED_MAUIKIT_VERSION 4.0.5)
 
 # === 1. COMPILER FLAGS (x86-64-v3) ===
 # Only apply x86-64 optimizations if we are actually compiling for x86_64.
@@ -92,6 +92,7 @@ target_link_libraries(cinderward PRIVATE
     Qt6::DBus
     KF6::CoreAddons
     KF6::I18n
+    KF6::I18nQml
     KF6::WindowSystem
     MauiKit4
 )
