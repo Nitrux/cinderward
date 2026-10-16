@@ -32,7 +32,7 @@ Priority: optional
 Architecture: ${TARGET_ARCH}
 Maintainer: uri_herrera@nxos.org
 Provides: cinderward
-Depends: firewalld,libqt6svg6,mauikit (>= 4.0.5)
+Depends: firewalld,libqt6svg6,mauikit (>= 4.0.5),qml6-module-qtquick,qml6-module-qtquick-controls,qml6-module-qtquick-layouts
 Description: cinderward
  cinderward
 CONTROL
