@@ -31,6 +31,9 @@ include(ECMFindQmlModule)
 include(ECMSetupVersion)
 include(ECMSourceVersionControl)
 
+set(QT_NO_PRIVATE_MODULE_WARNING ON CACHE BOOL
+    "MauiKit uses Qt's private WaylandClient API" FORCE)
+
 find_package(Qt6 ${REQUIRED_QT_VERSION} REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2 Svg DBus)
 find_package(KF6 ${REQUIRED_KF6_VERSION} REQUIRED COMPONENTS CoreAddons I18n WindowSystem)
 find_package(MauiKit4 ${REQUIRED_MAUIKIT_VERSION} REQUIRED)
@@ -101,3 +104,14 @@ install(TARGETS cinderward ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 
 # === INSTALL DESKTOP FILE ===
 install(FILES data/org.nitrux.cinderward.desktop DESTINATION ${KDE_INSTALL_APPDIR})
+
+if(NOT TARGET uninstall)
+    configure_file(
+        "${CMAKE_CURRENT_SOURCE_DIR}/cmake_uninstall.cmake.in"
+        "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake"
+        IMMEDIATE
+        @ONLY)
+
+    add_custom_target(uninstall
+        COMMAND ${CMAKE_COMMAND} -P "${CMAKE_CURRENT_BINARY_DIR}/cmake_uninstall.cmake")
+endif()
