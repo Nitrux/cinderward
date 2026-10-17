@@ -39,6 +39,7 @@ $APT_COMMAND install -y --no-install-recommends \
     libkf6i18n-dev \
     libkf6notifications-dev \
     libkf6windowsystem-dev \
+    libxkbcommon-dev \
     lintian \
     qt6-base-dev \
     qt6-multimedia-dev \
