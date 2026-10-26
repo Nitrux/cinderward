@@ -66,6 +66,12 @@ Maui.ApplicationWindow {
         flickable: scrollColumn.flickable
         background: null
         headerMargins: Maui.Style.contentMargins
+        headBar.preferredHeight: Maui.Style.rowHeightAlt
+        headBar.topPadding: Maui.Style.defaultPadding
+        headBar.bottomPadding: Maui.Style.defaultPadding
+        footBar.preferredHeight: Maui.Style.rowHeightAlt
+        footBar.topPadding: Maui.Style.defaultPadding
+        footBar.bottomPadding: Maui.Style.defaultPadding
 
         Component.onCompleted: {
             backend.refresh("")
